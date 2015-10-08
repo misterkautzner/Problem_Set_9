@@ -163,43 +163,44 @@ smallCatalog = \
 #
 # Problem 3: Subject Selection By Brute Force
 #
-# def recursDictBuilder(subjects, maxWork, dict):
 
-def weightOfList(subjects, solutionList):
+
+def findBestList(listOfSol):
     """
-    :param subjects: dictionary mapping subject name to (value, work)
-    :param solutionDict: List of classes (potential solution)
-    :return:  total work of solutionList
-    """
-
-    weight = 0
-
-    for d in solutionList:
-        weight += subjects[d][1]
-
-    return weight
-
-#weightOfList(subjects, ['6.00', '3.01', '2.03'])
-
-def findBestList(subjects, listOfSolutions):
+    :param listOfSol: a list of tuples (list of potential solutions)
+    :return: the dictionary with the highest total value (item 1 in the tuple)
     """
 
-    :param subjects: dictionary mapping subject name to (value, work)
-    :param listOfSolutions: a list of lists (list of potential solutions)
-    :return: the list with the highest total value
+    best = listOfSol[0]
+
+    for l in listOfSol:
+        if l[1] > best[1]:
+            best = l
+
+    return best[0]
+
+
+def addX(dTup, x, subjects):
+    """
+    Adds x to the dictionary and updates total value and total weight of the dictionary (in tuple)
+
+    :param dTup:    tuple with dictionary as 0th element
+    :param x:   key of element to be added
+    :param subjects:    dictionary of subjects
+    :return:    tuple combination of dTup and x
     """
 
-    best = listOfSolutions.keys()[0]
+    nTup = (dTup[0].copy(), dTup[1], dTup[2])
+    x1 = subjects[x][0]
+    x2 = subjects[x][1]
+    xDict = {x:(x1,x2)}
 
-    for l in listOfSolutions:
-        for m in listOfSolutions:
-            if weightOfList(subjects, m) > weightOfList(subjects, l):
-                best = m
+    nTup[0].update(xDict)
+    nTup = (nTup[0], nTup[1]+x1, nTup[2]+x2)
 
-    print m
-    return m
+    return nTup
 
-
+#addX(({'x':(1, 2), 'y':(5,7)}, 6, 9),'z',{'z':(9, 13)})
 
 
 def bruteForceAdvisor(subjects, maxWork):
@@ -219,37 +220,36 @@ def bruteForceAdvisor(subjects, maxWork):
 
     #  Write a method that goes through remaining dicts and finds the one with the highest value.
 
-    dicts = {'0':[0]}
-    fullDicts = {}
+    dicts = [({},0,0)]
+    fullDicts = []
 
     for x in subjects:
-        newElements = {}  # A list containing the previous lists with x appended to each
+        newElements = []  # A list containing the previous lists with x appended to each
 
         for d in dicts:
-            print "d = ", d
-            e = dict(d)     #This isn't working because d isn't a dict right now. It's just an element of a dict.  Must convert first?
-            print "e = ", e
-            print "x = ", x
-            e.update(x)
-            print "e = ", e
-            newElements.update(e)
+            nTup = addX(d, x, subjects)
+            newElements += [nTup]
 
-        #for n in newElements:       # If the new dicts are full, don't add them to list that grows
-        #    if weightOfList(subjects, n) == maxWork:
-         #       fullDicts += n
+        for n in newElements:       # If the new dicts are full, don't add them to list that grows
+            if n[2] == maxWork:
+                fullDicts += [n]
 
-          #  elif weightOfList(subjects, n) < maxWork:
-           #     dicts += newElements
+            elif n[2] < maxWork:
+                dicts += [n]
 
     dicts += fullDicts
-    return dicts
+
+    best = findBestList(dicts)
+    return best
 
 
 # bruteForceAdvisor([0,1,2,3], 15)
-bruteForceAdvisor(smallCatalog,15)
+#bruteForceAdvisor(smallCatalog,15)
+#bruteForceAdvisor(subjects, 15)
 #findBestList(subjects, bruteForceAdvisor(subjects, 15))
 
 #dictDict = {str(smallCatalog):(7, 3)}
 #dicTac = {'apple':(1,4)}
 #dictDict.update(dicTac)
 #print dictDict
+
