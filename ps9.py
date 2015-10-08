@@ -116,7 +116,6 @@ def greedyAdvisor(subjects, maxWork, comparator):
     comparator: function taking two tuples and returning a bool
     returns: dictionary mapping subject name to (value, work)
     """
-    # TODO...
 
     work = 0
     subs = subjects.copy()
@@ -220,29 +219,37 @@ def bruteForceAdvisor(subjects, maxWork):
 
     #  Write a method that goes through remaining dicts and finds the one with the highest value.
 
-    dicts = [[]]
-    fullDicts = [[]]
+    dicts = {'0':[0]}
+    fullDicts = {}
 
     for x in subjects:
-        newElements = []  # A list containing the previous lists with x appended to each
+        newElements = {}  # A list containing the previous lists with x appended to each
 
         for d in dicts:
-            e = list(d)
-            print
-            e += [x]
-            newElements += [e]
+            print "d = ", d
+            e = dict(d)     #This isn't working because d isn't a dict right now. It's just an element of a dict.  Must convert first?
+            print "e = ", e
+            print "x = ", x
+            e.update(x)
+            print "e = ", e
+            newElements.update(e)
 
-        for n in newElements:       # If the new dicts are full, don't add them to list that grows
-            if weightOfList(subjects, n) == maxWork:
-                fullDicts += n
+        #for n in newElements:       # If the new dicts are full, don't add them to list that grows
+        #    if weightOfList(subjects, n) == maxWork:
+         #       fullDicts += n
 
-            elif weightOfList(subjects, n) < maxWork:
-                dicts += newElements
+          #  elif weightOfList(subjects, n) < maxWork:
+           #     dicts += newElements
 
     dicts += fullDicts
     return dicts
 
 
 # bruteForceAdvisor([0,1,2,3], 15)
-#bruteForceAdvisor(smallCatalog,15)
-findBestList(subjects, bruteForceAdvisor(subjects, 15))
+bruteForceAdvisor(smallCatalog,15)
+#findBestList(subjects, bruteForceAdvisor(subjects, 15))
+
+#dictDict = {str(smallCatalog):(7, 3)}
+#dicTac = {'apple':(1,4)}
+#dictDict.update(dicTac)
+#print dictDict
